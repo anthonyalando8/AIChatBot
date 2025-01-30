@@ -1,11 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    Welcome this is chatbot.
-</body>
-</html>
+{% extends 'chat/base.html' %}
+
+{% block title %}AI CHATBOT{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>AI CHATBOT</h1>
+                <p>AI Chatbot is a conversational agent that interacts with users to provide information and services. It is designed to simulate human conversation and can be used in a variety of applications such as customer service, sales, and support.</p>
+                <p>AI Chatbot uses natural language processing and machine learning to understand and respond to user queries. It can answer questions, provide recommendations, and perform tasks such as booking appointments or ordering products.</p>
+                <p>AI Chatbot is available 24/7 and can handle multiple conversations simultaneously. It can be integrated with websites, messaging platforms, and mobile apps to provide a seamless user experience.</p>
+                <p>AI Chatbot is an intelligent assistant that can help businesses improve customer engagement, increase sales, and reduce costs. It is a powerful tool that can enhance the user experience and drive business growth.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block class_active_chat %}active{% endblock %}
+
+{% block nav-toggle %}
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'main/base.html' %}
+
+
+{% block title %}
+AI Assistant | SoftConnect
+{% endblock %}
+{% block titleWeb %}
+AI Assistant | SoftConnect
+{% endblock %}
+
+{% block header %} SoftChatAI {% endblock %}
+{% block body-color %}
+bg-dark
+{% endblock %}
+{% block content %}
+{% load custom_filters %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+<style>
+    .top-section{
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+        word-wrap: break-word;
+        overflow-y: scroll;
+    }
+    .top-section::-webkit-scrollbar {
+        display: none;
+    }
+    textarea {
+        resize: none; /* Disable manual resizing */
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+        max-height: 10vh;
+    }
+    textarea::-webkit-scrollbar {
+        display: none;
+    }
+    input[type="file"] {
+        display: none;
+    }
+    label{
+        cursor: pointer;
+    }
+    @media (min-width: 768px) {
+            #prompts-loader {
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+            }
+        }
+
+  
+</style>
+
+
+<div class="h-100 mx-auto" id="chat-container">
+    
+    <div class="top-section position-relative"id="top">
+        <div id="chat" class="text-light"></div>
+        <div class="container overflow-hidden align-items-center" id="prompts-loader"></div>
+
+        
+        <div class="position-fixed end-0" style="bottom: 98px;">
+            <button class="btn btn-success text-light m-2 bg-transparent" id="adjust-chat-button"><i class="fa-solid fa-arrow-down"></i></button>
+        </div>
+        {% if not user.is_authenticated %}
+        <div class="p-3 position-absolute top-0 start-50 translate-middle-x " style="z-index: 11; max-width: 100vw;">
+            <div id="toast_login_to_save_chat" class="toast" data-bs-autohide="false" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">
+                    <div class="row">
+                        <div class="col-10">
+                            Login to save history!
+                        </div>
+                        <div class="col-2 d-flex justify-content-center">
+                            <button type="button fs-2" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Initialize the toast -->
+        <script>
+            $(document).ready(function(){
+                $('#toast_login_to_save_chat').toast('show');
+            });
+        </script>
+        
+         {% endif %}
+    </div>
+    
+    <div class="bg-transparent m-2 border rounded-pill ps-3 pe-3" id="chat-form">
+        <form method="post" id="form" action="{% url 'chatbot:chat' %}" enctype="multipart/form-data">
+            <input type="hidden" name="send_prompt" value="send_prompt">
+            <input type="hidden" name="session_id" value="{{ default.session_id }}">
+            <input type="hidden" name="request_chat_id" id="request_chat_id" value="{{ default.chat_id }}">
+            <div class="input-group ">
+                <span class="input-group-text bg-transparent border-0" id="basic-addon1">
+                    <label for="id_image" class="text-light bg-transparent" id="lbl-upload-image">
+                        <i class="fa-regular fa-image"></i>
+                    </label>
+                    {{ form.image }}
+                </span>
+                {{ form.message }}
+                
+                <button type="submit" id="btn-submit"class="btn text-light border-0 btn-block disabled"><i class="fa-solid fa-paper-plane "></i></button>
+            </div>
+        </form>
+        
+
+    </div>
+</div>
+<form method="POST" hidden id="ai_chat_form" action="{% url 'chatbot:chat' %}">
+    {% csrf_token %}
+    <input type="hidden" name="get_ai_chats" id="get_ai_chats" value="{{ default.chat_id }}">
+    <button type="submit" name="btn_get_chats" id="btn_get_chats"></button>
+</form>  
+
+<script src="{% static 'js\ai-chats.js' %}"></script>
+   
+{%endblock%}
+<!-- {% block modal %}
+<div class="modal fade" id="modal-uploaded-image" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-uploaded-imageLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-uploaded-imageLabel">Uploaded Image</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img class="img-fluid" id="uploaded-img" src=""/>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="clear-selection">Clear</button>
+            <button type="button" class="btn btn-secondary" id="btn-change">Change</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="close-modal">Ok</button>
+        </div>
+      </div>
+    </div>
+</div>
+<script>hljs.highlightAll();</script>
+{% endblock %} -->

@@ -1,46 +1,43 @@
 import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
-from PIL import Image
-import io
+import os
+from collections import defaultdict
+from dotenv import load_dotenv
 
 class Model:
-    def __init__(self) -> None:
-        genai.configure(api_key="") # Add your API key here
-        self.model_text = genai.GenerativeModel("gemini-pro")
-        self.model_image = genai.GenerativeModel("gemini-pro-vision")
-        self.current_chat = []
-        self.text_models = {}
-        self.chat_text = self.model_text.start_chat(history=self.current_chat)
-        self.safety_settings ={
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE
-        }
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                print(m.name)
-    def text_model(self, text_model_id, message="Hello?"):
-        response = self.text_models[text_model_id].send_message(message, stream=True)
-        #response = self.get_chat(user).send_message(message, stream=True)
-        return response
-    
-    def image_model(self, image_model_id, img, message = None):
-        img_bytes = img.read()
-        pil_image = Image.open(io.BytesIO(img_bytes))
-        if message == None:
-            response = self.model_image.generate_content(pil_image, stream=True, safety_settings=self.safety_settings)
-        else:
-            response = self.model_image.generate_content([message,pil_image], stream=True, safety_settings=self.safety_settings)
-        
-        return response
-        
-    
-    def set_chat(self, text_model_id, current_chat = [], overide=False):
-        if text_model_id not in self.text_models or overide:
-            print(current_chat)
-            self.text_models[text_model_id] = self.model_text.start_chat(history=current_chat)
-        return self.text_models[text_model_id]
+    """
+    A class to manage interactions with the genai Generative Model API.
 
-    def get_chat_model(self, text_model_id):
-        return self.text_models[text_model_id]
+    Attributes:
+        model_text: The generative model used for text responses.
+        histories: A dictionary storing user conversation histories.
+    """
+    def __init__(self) -> None:
+        """Initialize the Model class and configure the genai API."""
+        load_dotenv()
+        api_key = os.getenv("GENAI_API_KEY")
+        if not api_key:
+            raise ValueError("API key is missing. Set it in the environment variables.")
+
+        try:
+            genai.configure(api_key=api_key)
+        except Exception as e:
+            raise RuntimeError("Failed to configure genai API.") from e
+
+        self.model_text = genai.GenerativeModel("gemini-1.5-flash")
+        self.histories = defaultdict(list)
+
+    def response_model(self, username: str, message: str = "Hello?") -> str:
+        """
+        Generate a response from the model based on user input.
+
+        Args:
+            username: The username to track conversation history.
+            message: The user's message to the model.
+
+        Returns:
+            A string containing the model's response.
+        """
+        text_model = self.model_text.start_chat(history=self.histories[username])
+        response = text_model.send_message(message, stream=True)
+        self.histories[username].append({"user": message, "model": "".join(chunk for chunk in response)})
+        return "".join(chunk for chunk in response)
