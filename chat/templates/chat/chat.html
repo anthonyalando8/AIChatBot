@@ -1,4 +1,4 @@
-{% extends 'main/base.html' %}
+{% extends 'chat/base.html' %}
 
 
 {% block title %}
@@ -13,7 +13,7 @@ AI Assistant | SoftConnect
 bg-dark
 {% endblock %}
 {% block content %}
-{% load custom_filters %}
+
 {% load static %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
 <style>
@@ -60,7 +60,6 @@ bg-dark
         <div id="chat" class="text-light"></div>
         <div class="container overflow-hidden align-items-center" id="prompts-loader"></div>
 
-        
         <div class="position-fixed end-0" style="bottom: 98px;">
             <button class="btn btn-success text-light m-2 bg-transparent" id="adjust-chat-button"><i class="fa-solid fa-arrow-down"></i></button>
         </div>
@@ -90,7 +89,8 @@ bg-dark
     </div>
     
     <div class="bg-transparent m-2 border rounded-pill ps-3 pe-3" id="chat-form">
-        <form method="post" id="form" action="{% url 'chatbot:chat' %}" enctype="multipart/form-data">
+        <form method="post" id="chat_form" action="{% url 'chatbot:chat' %}" enctype="multipart/form-data">
+            {% csrf_token %}
             <input type="hidden" name="send_prompt" value="send_prompt">
             <input type="hidden" name="session_id" value="{{ default.session_id }}">
             <input type="hidden" name="request_chat_id" id="request_chat_id" value="{{ default.chat_id }}">
@@ -103,7 +103,7 @@ bg-dark
                 </span>
                 {{ form.message }}
                 
-                <button type="submit" id="btn-submit"class="btn text-light border-0 btn-block disabled"><i class="fa-solid fa-paper-plane "></i></button>
+                <button type="submit" id="btn-submit"class="btn text-light border-0 btn-block"><i class="fa-solid fa-paper-plane "></i></button>
             </div>
         </form>
         

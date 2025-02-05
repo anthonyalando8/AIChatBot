@@ -23,7 +23,7 @@ class Model:
         except Exception as e:
             raise RuntimeError("Failed to configure genai API.") from e
 
-        self.model_text = genai.GenerativeModel("gemini-1.5-flash")
+        self.model_text = genai.GenerativeModel("gemini-2.0-flash-exp")
         self.histories = defaultdict(list)
 
     def response_model(self, username: str, message: str = "Hello?") -> str:
@@ -37,7 +37,10 @@ class Model:
         Returns:
             A string containing the model's response.
         """
-        text_model = self.model_text.start_chat(history=self.histories[username])
+        history = []
+        if username in self.histories:
+            history = self.histories[username]
+        text_model = self.model_text.start_chat(history=history)
         response = text_model.send_message(message, stream=True)
         self.histories[username].append({"user": message, "model": "".join(chunk for chunk in response)})
         return "".join(chunk for chunk in response)

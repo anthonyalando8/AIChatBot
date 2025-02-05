@@ -55,13 +55,7 @@
                     <li class="nav-item">
                         <a class="nav-link {% block class_active_home %}{% endblock %}" aria-current="page"  href="/">Home</a>
                     </li>
-                    {% for group in user.groups.all %}
-                        {% if group.name == "Admin" %}
-                        <li class="nav-item">
-                            <a class="nav-link {% block class_active_admin %}{% endblock %}" aria-current="page"  href="{% url 'main:admin' %}">Manage</a>
-                        </li>
-                        {% endif %}
-                    {% endfor %}
+                
                     <!-- <li class="nav-item d-none">
                         <a class="nav-link disabled" tabindex="-1" aria-disabled="true" href="/airtime">Utility</a>
                     </li> -->
@@ -97,12 +91,12 @@
                     <ul class="dropdown-menu">
                       {% if user.is_authenticated %}
                         <li><a class="dropdown-item" href="">Account</a></li>
-                        <li><a class="dropdown-item" href="{% url 'auth0:logout' %}">Sign Out</a></li>
+                        <li><a class="dropdown-item" href="">Sign Out</a></li>
 
                       {% else %}
-                      <li><a class="dropdown-item" href="{% url 'auth0:login' %}">Login</a></li>
+                      <li><a class="dropdown-item" href="">Login</a></li>
 
-                        <li><a class="dropdown-item" href="{% url 'auth0:register' %}">Register</a></li>
+                        <li><a class="dropdown-item" href="">Register</a></li>
                       {% endif %}
                     </ul>
                 </div>
