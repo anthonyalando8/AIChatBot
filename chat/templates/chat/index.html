@@ -1,26 +1,63 @@
 {% extends 'chat/base.html' %}
+{% load static %}  {# Load static files #}
 
-{% block title %}AI CHATBOT{% endblock %}
+{% block title %}Fashion AI{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>AI CHATBOT</h1>
-                <p>AI Chatbot is a conversational agent that interacts with users to provide information and services. It is designed to simulate human conversation and can be used in a variety of applications such as customer service, sales, and support.</p>
-                <p>AI Chatbot uses natural language processing and machine learning to understand and respond to user queries. It can answer questions, provide recommendations, and perform tasks such as booking appointments or ordering products.</p>
-                <p>AI Chatbot is available 24/7 and can handle multiple conversations simultaneously. It can be integrated with websites, messaging platforms, and mobile apps to provide a seamless user experience.</p>
-                <p>AI Chatbot is an intelligent assistant that can help businesses improve customer engagement, increase sales, and reduce costs. It is a powerful tool that can enhance the user experience and drive business growth.</p>
-            </div>
+
+<!-- Corrected CSS file path -->
+<link rel="stylesheet" href="{% static 'css/fashion.css' %}">
+
+<section
+  id="hero"
+  class="relative bg-cover h-full bg-center bg-black text-white pt-40 py-20"
+>
+  <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+  <div class="relative container mx-auto px-4">
+    <div
+      class="flex flex-col md:flex-row items-center justify-between text-center md:text-left"
+    >
+      <div class="md:pl-40 md:w-1/2">
+        <h1 class="text-6xl font-bold mb-6 animate-fade-in-down">
+          Fashion <span class="text-red-500">AI</span>
+        </h1>
+        <p class="text-xl mb-6 animate-fade-in-up">
+            Fashion AI is an intelligent system that provides personalized fashion recommendations using machine learning. It suggests outfits based on user preferences, trends, and occasions. Integrated with e-commerce and social media, it enhances shopping experiences and keeps users updated on trends. Available 24/7, Fashion AI transforms how people explore and style their wardrobes.
+        <div
+          class="mt-8 flex justify-center md:justify-start space-x-4 animate-fade-in-up"
+        >
+          <a
+            href="../uploading/upload.html"
+            class="bg-gradient-to-r from-pink-500 to-red-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg transform hover:scale-105 transition-transform duration-300"
+            >Get Started</a
+          >
         </div>
+      </div>
+      <div class="md:w-1/2 mt-16 md:mt-0 flex justify-center md:justify-end">
+        
+        <!-- Corrected image path -->
+        <img
+          alt="App Screenshot"
+          loading="lazy"
+          width="300"
+          height="200"
+          decoding="async"
+          class="rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
+          style="color: transparent"
+          src="{% static 'images/fashion.jpg' %}"
+        />
+        
+      </div>
     </div>
+  </div>
+</section>
+
 {% endblock %}
 
 {% block class_active_chat %}active{% endblock %}
 
 {% block nav-toggle %}
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+</button>
 {% endblock %}
