@@ -1,11 +1,12 @@
 from django.urls import path
+from django.shortcuts import render
 from . import views
 
 app_name = "chatbot"
 
 urlpatterns = [
     path('', views.index_view, name='index'),
-    path("chat/", view=views.chat_view, name="chat"),
-    path("signup/", view=views.signup_view, name="signup"),
-    path("login/", view=views.login_view, name="login"),
+    path("chat/",views.chat_view, name="chat"),
+    path("signup/",views.signup_view, name="signup"),
+    path("login/",views.login_view, name="login"),
 ]
