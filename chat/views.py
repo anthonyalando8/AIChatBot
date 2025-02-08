@@ -54,32 +54,35 @@ def chat_view(request):
     else:
         return redirect_page(request)
     
-# create account view
+# Create account view
 def signup_view(request):
     if request.method == "GET":
         return render(request, 'chat/signup.html', {})
+
     elif request.method == "POST":
         username = request.POST.get("email")
         password = request.POST.get("password")
         first_name = request.POST.get("first_name")
         last_name = request.POST.get("last_name")
-        if all in [username, password, first_name, last_name]:
-            user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name)
+
+        if all([username, password, first_name, last_name]):
+            # Check if the email is already registered
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({"message": "User already exists"}, status=400)
+
+            # Create the user
+            user = User.objects.create_user(
+                username=username, email=username, password=password, first_name=first_name, last_name=last_name
+            )
             user.save()
-            response = {
-                "message": "User created",
-                "status": 201
-            }
-            return JsonResponse(response, status=response["status"])
+
+            return JsonResponse({"message": "User created"}, status=201)
+
         else:
-            response = {
-                "message": "All fields are required",
-                "status": 400
-            }
-            return JsonResponse(response, status=response["status"])
+            return JsonResponse({"message": "All fields are required"}, status=400)
+
     else:
         return HttpResponse("Method not allowed", status=405)
-
 # login view
 
 def login_view(request):

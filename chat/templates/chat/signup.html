@@ -6,41 +6,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Fashion AI</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <script src="{% static 'js/auth.js' %}" defer></script>
 </head>
-<body class="bg-gray-100 flex justify-center items-center h-screen">
+<body>
 
-    <div class="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h2 class="text-2xl font-bold mb-4 text-center">Create an Account</h2>
-        <form id="signup-form" method="POST" class="space-y-4">
-            {% csrf_token %}
-            
-            <div>
-                <label for="signup-first-name" class="block text-sm font-medium text-gray-700">First Name</label>
-                <input type="text" id="signup-first-name" name="first_name" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-            </div>
+    <div class="container">
+        <!-- Left side: Signup Form -->
+        <div class="signup-form">
+            <h2>Create an Account</h2>
+            <form id="signup-form" method="POST">
+                {% csrf_token %}
 
-            <div>
-                <label for="signup-last-name" class="block text-sm font-medium text-gray-700">Last Name</label>
-                <input type="text" id="signup-last-name" name="last_name" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-            </div>
+                <div class="input-group">
+                    <label for="signup-first-name">First Name</label>
+                    <input type="text" id="signup-first-name" name="first_name" required>
+                </div>
 
-            <div>
-                <label for="signup-email" class="block text-sm font-medium text-gray-700">Email (Username)</label>
-                <input type="email" id="signup-email" name="email" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-            </div>
+                <div class="input-group">
+                    <label for="signup-last-name">Last Name</label>
+                    <input type="text" id="signup-last-name" name="last_name" required>
+                </div>
 
-            <div>
-                <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="signup-password" name="password" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-            </div>
+                <div class="input-group">
+                    <label for="signup-email">Email (Username)</label>
+                    <input type="email" id="signup-email" name="email" required>
+                </div>
 
-            <button id="signup-btn" type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 flex justify-center">
-                <span>Sign Up</span>
-                <span id="signup-spinner" class="hidden ml-2 loader"></span>
-            </button>
-        </form>
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" name="password" required>
+                </div>
+
+                <button id="signup-btn" type="submit">
+                    Sign Up
+                </button>
+            </form>
+        </div>
+
+        <!-- Right side: Image -->
+        <div class="signup-image"></div>
     </div>
 
 </body>
