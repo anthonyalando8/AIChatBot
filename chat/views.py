@@ -9,6 +9,10 @@ from django.core.cache import cache
 from django.core.serializers import serialize
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.contrib.auth import get_user_model
+import json
+
+
 
 genai = Model()
 
@@ -55,34 +59,35 @@ def chat_view(request):
         return redirect_page(request)
     
 # Create account view
+User = get_user_model()
+
 def signup_view(request):
     if request.method == "GET":
-        return render(request, 'chat/signup.html', {})
+        return render(request, 'chat/signup.html') 
 
     elif request.method == "POST":
-        username = request.POST.get("email")
-        password = request.POST.get("password")
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
+        try:
+            data = json.loads(request.body)  # Handle JSON request
+            email = data.get("email")
+            password = data.get("password")
+            first_name = data.get("first_name")
+            last_name = data.get("last_name")
 
-        if all([username, password, first_name, last_name]):
-            # Check if the email is already registered
-            if User.objects.filter(username=username).exists():
-                return JsonResponse({"message": "User already exists"}, status=400)
+            if not all([email, password, first_name, last_name]):
+                return JsonResponse({"error": "All fields are required"}, status=400)
 
-            # Create the user
-            user = User.objects.create_user(
-                username=username, email=username, password=password, first_name=first_name, last_name=last_name
-            )
-            user.save()
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({"error": "User already exists"}, status=400)
 
-            return JsonResponse({"message": "User created"}, status=201)
+            user = User.objects.create_user(email=email, username=email, password=password,
+                                            first_name=first_name, last_name=last_name)
 
-        else:
-            return JsonResponse({"message": "All fields are required"}, status=400)
+            return JsonResponse({"message": "User created successfully!"}, status=201)
 
-    else:
-        return HttpResponse("Method not allowed", status=405)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 # login view
 
 def login_view(request):

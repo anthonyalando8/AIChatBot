@@ -94,7 +94,7 @@
                         <li><a class="dropdown-item" href="">Sign Out</a></li>
 
                       {% else %}
-                      <li><a class="dropdown-item" href="">Login</a></li>
+                      <li><a class="dropdown-item" href="{% url 'chatbot:login' %}">Login</a></li>
 
                       <li><a class="dropdown-item" href="{% url 'chatbot:signup' %}">Register</a></li>
 
