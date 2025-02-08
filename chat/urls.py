@@ -1,12 +1,7 @@
-from django.urls import path
-from django.shortcuts import render
-from . import views
-
-app_name = "chatbot"
+from django.contrib import admin
+from django.urls import path, include
 
 urlpatterns = [
-    path('', views.index_view, name='index'),
-    path("chat/",views.chat_view, name="chat"),
-    path("signup/",views.signup_view, name="signup"),
-    path("login/",views.login_view, name="login"),
+    path('admin/', admin.site.urls),
+    path('', include('chatbot.urls', namespace='chatbot')),  # ✅ Correct way to include namespace
 ]
