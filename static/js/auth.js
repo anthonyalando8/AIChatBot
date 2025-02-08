@@ -49,3 +49,55 @@ function getCSRFToken() {
 function createToast(message, status) {
   alert(`${status.toUpperCase()}: ${message}`);  // Replace with a toast library if needed
 }
+
+//Login js
+
+document.addEventListener("DOMContentLoaded", function () {
+  const loginForm = document.getElementById("login-form");
+  const loginBtn = document.getElementById("login-btn");
+  const loginSpinner = document.getElementById("login-spinner");
+
+  loginForm.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value.trim();
+
+      if (!email || !password) {
+          createToast("All fields are required.", "error");
+          return;
+      }
+
+      loginBtn.disabled = true;
+      loginSpinner.style.display = "block";
+
+      const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+      try {
+          const response = await fetch(loginForm.action, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": csrfToken
+              },
+              body: JSON.stringify({ email, password })
+          });
+
+          const data = await response.json();
+
+          if (response.status === 200) {
+              createToast("Logged in successfully!", "success");
+              setTimeout(() => window.location.href = "/", 1000); // Redirect to home
+          } else if (response.status === 401) {
+              createToast("Invalid credentials.", "warning");
+          } else {
+              createToast("An error occurred. Please try again.", "error");
+          }
+      } catch (error) {
+          createToast("Server error. Try again later.", "error");
+      } finally {
+          loginBtn.disabled = false;
+          loginSpinner.style.display = "none";
+      }
+  });
+});
