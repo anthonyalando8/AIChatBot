@@ -1,7 +1,12 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from . import views
+
+app_name = 'chatbot'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('chatbot.urls', namespace='chatbot')),  # ✅ Correct way to include namespace
+    path('', views.index_view, name='index'),
+    path('chat/', views.chat_view, name='chat'),
+    path('signup/', views.signup_view, name='signup'),
+    path('login/', views.login_view, name='login'),
+    path('about/', views.about_view, name='about'),
 ]

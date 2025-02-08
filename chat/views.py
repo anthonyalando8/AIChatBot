@@ -15,7 +15,6 @@ genai = Model()
 # Get user model
 User = get_user_model()
 
-# ✅ Index page view
 def index_view(request):
     return render(request, 'chat/index.html', {})
 
@@ -56,7 +55,6 @@ def chat_view(request):
 
     return redirect_page(request)
 
-# ✅ Signup view
 def signup_view(request):
     if request.method == "GET":
         return render(request, 'chat/signup.html')
@@ -75,8 +73,13 @@ def signup_view(request):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({"error": "User already exists"}, status=400)
 
-            user = User.objects.create_user(email=email, username=email, password=password,
-                                            first_name=first_name, last_name=last_name)
+            user = User.objects.create_user(
+                email=email, 
+                username=email, 
+                password=password,
+                first_name=first_name,
+                last_name=last_name
+            )
 
             return JsonResponse({"message": "User created successfully!"}, status=201)
 
@@ -106,20 +109,16 @@ def login_view(request):
 
     return HttpResponse("Method not allowed", status=405)
 
-# ✅ About page view
 def about_view(request):
     return render(request, 'chat/about.html', {})
 
-# ✅ Utility function to generate a random session ID
 def generate_id(length=25):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
-# ✅ Function to get cached user data
 def get_user_cache(user, key):
     return cache.get(f"{user.id}_{key}")
 
-# ✅ Redirect function for chat
 def redirect_page(request):
     form = CreateChatForm()
     cached_chat_id = get_user_cache(request.user, "previous_chat_id")
