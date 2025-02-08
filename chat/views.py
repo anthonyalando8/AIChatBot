@@ -7,13 +7,15 @@ import random
 import string
 from django.core.cache import cache
 from django.core.serializers import serialize
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 genai = Model()
 
 def index_view(request):
     return render(request, 'chat/index.html', {})
 
-def index(request):
+def chat_view(request):
     user = request.user
     image = None
 
@@ -30,7 +32,11 @@ def index(request):
                     
                 else:
                     try:
-                        model_response = genai.response_model("Anthony", message)
+                        username = request_session_id
+                        user = request.user
+                        if user.is_authenticated:
+                            username = user.username
+                        model_response = genai.response_model(username, message)
                         response = {
                             "message":"Success",
                             "prompt": message,
@@ -39,6 +45,7 @@ def index(request):
                         }
                         return JsonResponse(response, status=response["status"])
                     except KeyError as e:
+                        print(f"Error: {e}")
                         response = {
                                 "message": f"Error {e}",
                                 "status": 500
@@ -46,7 +53,64 @@ def index(request):
                         return JsonResponse(response, status=response["status"])
     else:
         return redirect_page(request)
+    
+# create account view
+def signup_view(request):
+    if request.method == "GET":
+        return render(request, 'chat/signup.html', {})
+    elif request.method == "POST":
+        username = request.POST.get("email")
+        password = request.POST.get("password")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        if all in [username, password, first_name, last_name]:
+            user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name)
+            user.save()
+            response = {
+                "message": "User created",
+                "status": 201
+            }
+            return JsonResponse(response, status=response["status"])
+        else:
+            response = {
+                "message": "All fields are required",
+                "status": 400
+            }
+            return JsonResponse(response, status=response["status"])
+    else:
+        return HttpResponse("Method not allowed", status=405)
 
+# login view
+
+def login_view(request):
+    if request.method == "GET":
+        return render(request, 'chat/login.html', {})
+    elif request.method == "POST":
+        username = request.POST.get("email")
+        password = request.POST.get("password")
+        if all in [username, password]:
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                response = {
+                    "message": "User logged in successfully",
+                    "status": 200
+                }
+                return JsonResponse(response, status=response["status"])
+            else:
+                response = {
+                    "message": "Invalid credentials",
+                    "status": 401
+                }
+                return JsonResponse(response, status=response["status"])
+        else:
+            response = {
+                "message": "All fields are required",
+                "status": 400
+            }
+            return JsonResponse(response, status=response["status"])
+    else:
+        return HttpResponse("Method not allowed", status=405)
 
 def generate_id(length=25):
     characters = string.ascii_letters + string.digits
