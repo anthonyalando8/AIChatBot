@@ -1,10 +1,22 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    {% load static %}
 
-
-{% block content %}
+    <script src="https://kit.fontawesome.com/3695de9773.js" crossorigin="anonymous"></script>
+    <script src="{% static 'js/index.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <script src="{% static 'js/auth.js' %}" defer></script>
 
+</head>
+<body id="body">
+    
     <div class="container">
         <!-- Left side: Signup Form -->
         <div class="signup-form">
@@ -41,4 +53,5 @@
         <!-- Right side: Image -->
         <div class="signup-image"></div>
     </div>
-{% endblock %}
+</body>
+</html>

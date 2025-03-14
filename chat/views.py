@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.core.cache import cache
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.core.serializers import serialize
 from .gemini_model import Model
 from .forms import CreateChatForm
@@ -12,13 +13,9 @@ import string
 # Initialize AI model
 genai = Model()
 
-# Get user model
-User = get_user_model()
-
 def index_view(request):
     return render(request, 'chat/index.html', {})
 
-# ✅ Chat page view
 def chat_view(request):
     user = request.user
     image = None
@@ -61,17 +58,16 @@ def signup_view(request):
 
     elif request.method == "POST":
         try:
-            data = json.loads(request.body)
-            email = data.get("email")
-            password = data.get("password")
-            first_name = data.get("first_name")
-            last_name = data.get("last_name")
+            email = request.POST.get("email", None)
+            password = request.POST.get("password", None)
+            first_name = request.POST.get("first_name", None)
+            last_name = request.POST.get("last_name", None)
 
             if not all([email, password, first_name, last_name]):
-                return JsonResponse({"error": "All fields are required"}, status=400)
+                return JsonResponse({"message": "All fields are required"}, status=400)
 
             if User.objects.filter(email=email).exists():
-                return JsonResponse({"error": "User already exists"}, status=400)
+                return JsonResponse({"message": "User already exists"}, status=400)
 
             user = User.objects.create_user(
                 email=email, 
@@ -83,12 +79,12 @@ def signup_view(request):
 
             return JsonResponse({"message": "User created successfully!"}, status=201)
 
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+        except Exception as e:
+            print(f"Error: {e}")
+            return JsonResponse({"message": "Something went wrong."}, status=400)
 
-    return JsonResponse({"error": "Method not allowed"}, status=405)
+    return JsonResponse({"message": "Method not allowed"}, status=405)
 
-# ✅ Login view
 def login_view(request):
     if request.method == "GET":
         return render(request, 'chat/login.html')
@@ -97,7 +93,7 @@ def login_view(request):
         username = request.POST.get("email")
         password = request.POST.get("password")
 
-        if all([username, password]):  # ✅ Corrected syntax
+        if all([username, password]): 
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
