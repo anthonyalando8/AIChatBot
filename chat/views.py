@@ -8,7 +8,9 @@ from .gemini_model import Model
 from .forms import CreateChatForm
 import json
 import random
+from django.contrib.auth.decorators import login_required
 import string
+from . import models
 
 # Initialize AI model
 genai = Model()
@@ -16,6 +18,8 @@ genai = Model()
 def index_view(request):
     return render(request, 'chat/index.html', {})
 
+
+@login_required(login_url="/login")
 def chat_view(request):
     user = request.user
     image = None
@@ -24,33 +28,56 @@ def chat_view(request):
         if request.POST.get("send_prompt"):
             request_session_id = request.POST.get("session_id")
             form = CreateChatForm(request.POST, request.FILES)
-            
-            if form.is_valid():
-                message = form.cleaned_data['message']
 
-                if 'image' in form.cleaned_data and form.cleaned_data['image']:
-                    image = form.cleaned_data['image']
+            if form.is_valid():
+                message = form.cleaned_data["message"]
+
+                if "image" in form.cleaned_data and form.cleaned_data["image"]:
+                    image = form.cleaned_data["image"]
                     # Process image input here if needed
 
                 else:
                     try:
-                        username = request_session_id
-                        if user.is_authenticated:
-                            username = user.username
-                        model_response = genai.response_model(username, message)
+                        username = user.username
+                        model_response = genai.response_model(user, message)
 
                         response = {
                             "message": "Success",
                             "prompt": message,
                             "response": model_response,
-                            "status": 200
+                            "status": 200,
                         }
                         return JsonResponse(response, status=200)
 
                     except KeyError as e:
-                        return JsonResponse({"message": f"Error: {e}", "status": 500}, status=500)
+                        return JsonResponse(
+                            {"message": f"Error: {e}", "status": 500}, status=500
+                        )
+
+                    except Exception as e:
+                        return JsonResponse(
+                            {"message": f"Error: {str(e)}", "status": 500}, status=500
+                        )
 
     return redirect_page(request)
+
+def update_user_chat(user = None, response = None, prompt= None):
+    # update chat
+    if not(user and response and prompt):
+        print("All fields required")
+        return
+    
+    try:
+        new_message = models.Message.objects.create(
+            user=user,
+            message=prompt,
+            response=response
+        )
+
+        new_message.save()
+
+    except Exception as e:
+        print(f"Error: {e}")
 
 def signup_view(request):
     if request.method == "GET":
@@ -116,9 +143,36 @@ def get_user_cache(user, key):
     return cache.get(f"{user.id}_{key}")
 
 def redirect_page(request):
+    user = request.user
     form = CreateChatForm()
     cached_chat_id = get_user_cache(request.user, "previous_chat_id")
     session_id = str(request.session._get_or_create_session_key())
+
+    # get saved history
+    message_list = []
+    try:
+        history = None
+        # Get all chat history for the user
+        chat_history = user.chat_history.first()
+
+        if chat_history:
+            history = chat_history.chat_history
+        # Get all messages for the user
+        genai.update_user_history(user, history)
+
+        messages = user.messages.all()
+
+        message_list = [
+            {
+                "message": message.message,
+                "reponse": message.reponse
+            } for message in messages
+        ] if messages else []
+        
+    except Exception as e:
+        print(f"Error getting history: {e}")
+
+    print(f"Message list: {message_list}")
 
     context = {
         "user": request.user,
@@ -126,7 +180,8 @@ def redirect_page(request):
         "default": {
             "chat_id": "new_chat",
             "session_id": session_id
-        }
+        },
+        "messages": message_list
     }
     
     if cached_chat_id is not None:

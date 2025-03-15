@@ -2,6 +2,9 @@ import google.generativeai as genai
 import os
 from collections import defaultdict
 from dotenv import load_dotenv
+from . import models
+from datetime import datetime
+
 
 class Model:
     """
@@ -26,7 +29,7 @@ class Model:
         self.model_text = genai.GenerativeModel("gemini-2.0-flash-exp")
         self.histories = {}
 
-    def response_model(self, username: str, message: str = "Hello?") -> str:
+    def response_model(self, user, message: str = "Hello?") -> str:
         """
         Generate a response from the model based on user input.
 
@@ -38,30 +41,55 @@ class Model:
             A string containing the model's response.
         """
         # Ensure history is correctly formatted
-        history = self.histories.get(username, [])
+        try:
+            history = self.histories.get(user.username, [])
+
+            # Start chat with properly formatted history
+            text_model = self.model_text.start_chat(history=history)
+
+            response = text_model.send_message(message, stream=True)
+
+            # Ensure full iteration before accessing response attributes
+            collected_text = []
+
+            for chunk in response:
+                collected_text.append(chunk.text)
+
+            model_response = "".join(collected_text)  # Combine chunks into a full response
+
+            # new_history = response.history
+
+            # self.update_user_history(user, new_history)
+            
+            return model_response
         
-        # Reformat history to match Gemini API expectations
-        formatted_history = []
-        for entry in history:
-            formatted_history.append({"role": "user", "parts": [entry["user"]]})
-            formatted_history.append({"role": "model", "parts": [entry["model"]]})
+        except Exception as e:
+            print(f"Error occured {e}")
+            return ""
+    
+    def update_user_history(self, user = None, history = None):
+        if not(history and user):
+            print("Nothing to update")
+            return
+        try:
+            # update user history
 
-        # Start chat with properly formatted history
-        text_model = self.model_text.start_chat(history=formatted_history)
+            self.histories[user.username] = history
 
-        response = text_model.send_message(message, stream=True)
+            previous_history, _ = models.ChatHistory.objects.get_or_create(user=user)
 
-        # Ensure full iteration before accessing response attributes
-        collected_text = []
-        for chunk in response:
-            collected_text.append(chunk.text)
+            current_date_time = datetime.now()
 
-        model_response = "".join(collected_text)  # Combine chunks into a full response
+            previous_history.chat_history = history
+
+            previous_history.last_updated = current_date_time
+
+            previous_history.save()
+
+        except Exception as e:
+            print(f"Error updating: {e}")
         
-        # Append new conversation entries in correct format
-        history.append({"user": message, "model": model_response})
-        self.histories[username] = history
-
-        return model_response
+        
+        
 
 
