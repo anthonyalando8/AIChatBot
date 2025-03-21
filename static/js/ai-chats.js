@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    var prompts_loader = document.getElementById("prompts-loader");
     var converter = new showdown.Converter();
 
     var user_avatar = "https://ik.imagekit.io/anthonyalando/Soft_Connect/user.png?updatedAt=1682239876486"
@@ -77,17 +76,15 @@ $(document).ready(function(){
             var response_ai_name = converted_to_html_softchat_avatar_name+`<div class="ml-2 m-2" >${response_to_html}</div>`;
             var message_user_name = converted_to_html_user_avatar_name + `<div class="ml-2 m-2">${image_html}${prompt}</div>`;
             htmlData += (message_user_name+response_ai_name);
-            
-            prompts_loader.innerHTML = ""
-            prompts_loader.classList.add('d-none')
+        
 
             $("#chat").append(htmlData)
 
             hljs.highlightAll()
 
-            $("#get_ai_chats").attr("value", chathistory)
-            console.log($("#get_ai_chats").attr("value"))
-    
+            //scroll bottom
+            var chat = document.getElementById("chat");
+            chat.scrollTop = chat.scrollHeight;
         })
         .catch(error => {
             $('#btn-submit').removeClass('disabled');

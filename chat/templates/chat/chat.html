@@ -8,16 +8,46 @@
 {% block content %}
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/signup.css' %}">
-<link rel="stylesheet" href="{% static 'css/chat.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
 <style>
-    .top-section{
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1030; /* Ensures it's above other elements */
+    }
+
+    body {
+        padding-top: 60px; /* Adjust based on navbar height */
+        overflow-y: auto;
+    }
+
+    #chat-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* Allow scrolling */
+        padding-top: 60px;
+        padding-bottom: 70px;
+    }
+
+
+    #chat-form {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 10px;
+    }
+
+    /* .top-section{
         -ms-overflow-style: none;
         scrollbar-width: none;
         word-wrap: break-word;
-        overflow-y: scroll;
-    }
+        
+        overflow-y: auto;
+        flex-grow: 1; 
+    } */
     .top-section::-webkit-scrollbar {
         display: none;
     }
@@ -44,20 +74,15 @@
         background: rgba(0, 0, 0, 0.8);
         padding: 10px;
     }
-    @media (min-width: 768px) {
-        #prompts-loader {
-            position: absolute !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-        }
+    #chat{
+        overflow-y: auto!important;
     }
+    
 </style>
 
 <div class="h-100 mx-auto" id="chat-container">
     <div class="top-section position-relative" id="top">
-        <div id="chat" class="text-light" ></div>
-        <div class="container overflow-hidden align-items-center" id="prompts-loader"></div>
+        <div id="chat" class="text-light h-100 w-100"></div>
 
         <div class="position-fixed end-0" style="bottom: 98px;">
             <button class="btn btn-success text-light m-2 bg-transparent" id="adjust-chat-button"><i class="fa-solid fa-arrow-down"></i></button>
@@ -104,12 +129,6 @@
         </div>
     </form>
 </div>
-
-<form method="POST" hidden id="ai_chat_form" action="{% url 'chatbot:chat' %}">
-    {% csrf_token %}
-    <input type="hidden" name="get_ai_chats" id="get_ai_chats" value="{{ default.chat_id }}">
-    <button type="submit" name="btn_get_chats" id="btn_get_chats"></button>
-</form>
 
 <script src="{% static 'js/ai-chats.js' %}"></script>
 {% endblock %}
