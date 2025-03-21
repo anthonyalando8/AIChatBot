@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.core.cache import cache
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.serializers import serialize
 from .gemini_model import Model
@@ -188,3 +188,7 @@ def redirect_page(request):
         context["default"]["chat_id"] = cached_chat_id
                
     return render(request, 'chat/chat.html', context)
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'chat/login.html', {})

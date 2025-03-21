@@ -15,6 +15,7 @@ body {
   height: 100vh; /* Full screen height */
   padding-top: 60px; /* Offset navbar */
   padding-bottom: 70px; /* Offset chat input */
+  overflow-y: scroll;
 }
 
 #chat-form {

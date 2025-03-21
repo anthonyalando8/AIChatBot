@@ -91,7 +91,7 @@
                     <ul class="dropdown-menu">
                       {% if user.is_authenticated %}
                         <li><a class="dropdown-item" href="">Account</a></li>
-                        <li><a class="dropdown-item" href="">Sign Out</a></li>
+                        <li><a class="dropdown-item" href="/logout">Sign Out</a></li>
 
                       {% else %}
                       <li><a class="dropdown-item" href="{% url 'chatbot:login' %}">Login</a></li>
