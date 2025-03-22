@@ -1,25 +1,49 @@
-.navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1030; /* Ensures it's above other elements */
-}
-
-body {
-  padding-top: 60px; /* Adjust based on navbar height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 #chat-container {
   display: flex;
   flex-direction: column;
   height: 100vh; /* Full screen height */
-  padding-top: 60px; /* Offset navbar */
-  padding-bottom: 70px; /* Offset chat input */
+}
+
+.top-section {
+  flex: 1; /* Takes remaining space */
+  overflow-y: auto;
+  padding-bottom: 80px; /* Ensure space for input field */
+  word-wrap: break-word;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.top-section::-webkit-scrollbar {
+  display: none;
 }
 
 #chat-form {
   position: fixed;
   bottom: 0;
-  width: 100%;/* Optional: Dark background */
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
   padding: 10px;
+  box-shadow: 0 -2px 5px rgba(255, 255, 255, 0.1);
+}
+
+textarea {
+  resize: none;
+  max-height: 10vh;
+  overflow-y: auto;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+label {
+  cursor: pointer;
 }
