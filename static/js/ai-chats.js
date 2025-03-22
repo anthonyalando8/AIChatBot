@@ -1,4 +1,26 @@
 $(document).ready(function(){
+    function get_element_height() {
+        var new_height = $("#chat-form").outerHeight(true);
+        return new_height;
+    }
+
+    function setSectionHeight(new_height){
+        //return $(".top-section").height(new_height);
+        console.log("newhight:" ,new_height)
+        $(".top-section").css({
+            "height": `calc(100% - ${new_height}px)`,
+            "max-height": `calc(100% - ${new_height}px)`,
+            "min-height": `calc(100% - ${new_height}px)`
+        })
+    }
+    // Call the function once when the document is ready
+    setSectionHeight(get_element_height())
+
+    // Attach the function to the window resize event
+    $(window).resize(function(){
+        setSectionHeight(get_element_height())
+    });
+    
     var converter = new showdown.Converter();
 
     var user_avatar = "https://ik.imagekit.io/anthonyalando/Soft_Connect/user.png?updatedAt=1682239876486"

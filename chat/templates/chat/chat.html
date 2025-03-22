@@ -21,13 +21,19 @@
         padding-top: 60px; /* Adjust based on navbar height */
         overflow-y: auto;
     }
+    html, body {
+        height: 100%;
+        overflow-y: auto;
+    }
+
 
     #chat-container {
         display: flex;
         flex-direction: column;
-        min-height: 100vh; /* Allow scrolling */
+        min-height: 100vh; 
         padding-top: 60px;
         padding-bottom: 70px;
+        overflow-y: auto;
     }
 
 
@@ -40,14 +46,12 @@
         padding: 10px;
     }
 
-    /* .top-section{
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+    .top-section{
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
         word-wrap: break-word;
-        
-        overflow-y: auto;
-        flex-grow: 1; 
-    } */
+        overflow-y: scroll;
+    }
     .top-section::-webkit-scrollbar {
         display: none;
     }
@@ -75,7 +79,7 @@
         padding: 10px;
     }
     #chat{
-        overflow-y: auto!important;
+        overflow: auto!important;
     }
     
 </style>
@@ -84,51 +88,53 @@
     <div class="top-section position-relative" id="top">
         <div id="chat" class="text-light h-100 w-100"></div>
 
-        <div class="position-fixed end-0" style="bottom: 98px;">
-            <button class="btn btn-success text-light m-2 bg-transparent" id="adjust-chat-button"><i class="fa-solid fa-arrow-down"></i></button>
-        </div>
-        {% if not user.is_authenticated %}
-        <div class="p-3 position-absolute top-0 start-50 translate-middle-x" style="z-index: 11; max-width: 100vw;">
-            <div id="toast_login_to_save_chat" class="toast" data-bs-autohide="false" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-body">
-                    <div class="row">
-                        <div class="col-10">Login to save history!</div>
-                        <div class="col-2 d-flex justify-content-center">
-                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
+    <div class="position-fixed end-0" style="bottom: 98px;">
+        <button class="btn btn-success text-light m-2 bg-transparent" id="adjust-chat-button"><i class="fa-solid fa-arrow-down"></i></button>
+    </div>
+    {% if not user.is_authenticated %}
+    <div class="p-3 position-absolute top-0 start-50 translate-middle-x" style="z-index: 11; max-width: 100vw;">
+        <div id="toast_login_to_save_chat" class="toast" data-bs-autohide="false" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body">
+                <div class="row">
+                    <div class="col-10">Login to save history!</div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                 </div>
             </div>
         </div>
-        <script>
-            $(document).ready(function(){
-                $('#toast_login_to_save_chat').toast('show');
-            });
-        </script>
-        {% endif %}
     </div>
+    <script>
+        $(document).ready(function(){
+            $('#toast_login_to_save_chat').toast('show');
+        });
+    </script>
+    {% endif %}
+    </div>
+
+    <div id="chat-form">
+        <form method="post" id="chat_form" action="{% url 'chatbot:chat' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="send_prompt" value="send_prompt">
+            <input type="hidden" name="session_id" value="{{ default.session_id }}">
+            <input type="hidden" name="request_chat_id" id="request_chat_id" value="{{ default.chat_id }}">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-0" id="basic-addon1">
+                    <label for="id_image" class="text-light bg-transparent" id="lbl-upload-image">
+                        <i class="fa-regular fa-image"></i>
+                    </label>
+                    {{ form.image }}
+                </span>
+                {{ form.message }}
+                <button type="submit" id="btn-submit" class="btn text-light border-0 btn-block">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    
 </div>
 
-<div id="chat-form">
-    <form method="post" id="chat_form" action="{% url 'chatbot:chat' %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" name="send_prompt" value="send_prompt">
-        <input type="hidden" name="session_id" value="{{ default.session_id }}">
-        <input type="hidden" name="request_chat_id" id="request_chat_id" value="{{ default.chat_id }}">
-        <div class="input-group">
-            <span class="input-group-text bg-transparent border-0" id="basic-addon1">
-                <label for="id_image" class="text-light bg-transparent" id="lbl-upload-image">
-                    <i class="fa-regular fa-image"></i>
-                </label>
-                {{ form.image }}
-            </span>
-            {{ form.message }}
-            <button type="submit" id="btn-submit" class="btn text-light border-0 btn-block">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
-    </form>
-</div>
 
 <script src="{% static 'js/ai-chats.js' %}"></script>
 {% endblock %}
